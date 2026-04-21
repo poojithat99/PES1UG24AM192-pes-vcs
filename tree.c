@@ -114,6 +114,8 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
     return 0;
 }
 
+#include "index.h"
+
 // ─── TODO: Implement these ──────────────────────────────────────────────────
 
 // Build a tree hierarchy from the current index and write all tree
@@ -130,8 +132,10 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 //
 // Returns 0 on success, -1 on error.
 int tree_from_index(ObjectID *id_out) {
-    // TODO: Implement recursive tree building
-    // (See Lab Appendix for logical steps)
+    Index index;
+    if (index_load(&index) != 0) return -1;
+    
+    // TODO: implement recursive call
     (void)id_out;
     return -1;
 }
