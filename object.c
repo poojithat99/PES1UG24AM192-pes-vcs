@@ -207,5 +207,36 @@ int object_read(const ObjectID *id, ObjectType *type_out, void **data_out, size_
         return -1; // Integrity check failed
     }
 
-    return -1; // remaining parts to be implemented
+    char *header_end = memchr(full_data, '\0', file_size);
+    if (!header_end) {
+        free(full_data);
+        return -1;
+    }
+
+    if (strncmp((char*)full_data, "blob", 4) == 0) {
+        *type_out = OBJ_BLOB;
+    } else if (strncmp((char*)full_data, "tree", 4) == 0) {
+        *type_out = OBJ_TREE;
+    } else if (strncmp((char*)full_data, "commit", 6) == 0) {
+        *type_out = OBJ_COMMIT;
+    } else {
+        free(full_data);
+        return -1;
+    }
+
+    size_t header_len = header_end - (char*)full_data + 1;
+    size_t data_len = file_size - header_len;
+
+    void *data = malloc(data_len);
+    if (!data) {
+        free(full_data);
+        return -1;
+    }
+
+    memcpy(data, header_end + 1, data_len);
+    *data_out = data;
+    *len_out = data_len;
+
+    free(full_data);
+    return 0;
 }
