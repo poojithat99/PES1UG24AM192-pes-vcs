@@ -239,6 +239,17 @@ int index_add(Index *index, const char *path) {
     }
     free(data);
 
-    // TODO: Implement file staging entry addition
-    return -1;
+    IndexEntry *entry = index_find(index, path);
+    if (!entry) {
+        if (index->count >= MAX_INDEX_ENTRIES) return -1;
+        entry = &index->entries[index->count++];
+        snprintf(entry->path, sizeof(entry->path), "%s", path);
+    }
+
+    entry->mode = S_ISDIR(st.st_mode) ? 0040000 : (st.st_mode & S_IXUSR) ? 0100755 : 0100644;
+    entry->hash = id;
+    entry->mtime_sec = (uint64_t)st.st_mtime;
+    entry->size = st.st_size;
+
+    return index_save(index);
 }
