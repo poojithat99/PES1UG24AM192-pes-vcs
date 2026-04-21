@@ -201,7 +201,18 @@ int commit_create(const char *message, ObjectID *commit_id_out) {
         return -1;
     }
 
+    if (head_read(&commit.parent) == 0) {
+        commit.has_parent = 1;
+    } else {
+        commit.has_parent = 0;
+    }
+
+    const char *author = pes_author();
+    snprintf(commit.author, sizeof(commit.author), "%s", author);
+    commit.timestamp = time(NULL);
+    snprintf(commit.message, sizeof(commit.message), "%s", message);
+
     // TODO: implement remaining commit logic
-    (void)message; (void)commit_id_out;
+    (void)commit_id_out;
     return -1;
 }
