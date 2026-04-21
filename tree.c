@@ -133,8 +133,25 @@ static int build_tree_level(IndexEntry *entries, int count, int depth, ObjectID 
             te->hash = entries[i].hash;
             i++;
         } else {
-            // TODO: implement folder grouping
-            i++;
+            size_t dir_len = slash - path;
+            int j = i;
+            while (j < count) {
+                const char *p = entries[j].path + depth;
+                if (strncmp(p, path, dir_len) != 0 || p[dir_len] != '/') {
+                    break;
+                }
+                j++;
+            }
+            ObjectID sub_id;
+            build_tree_level(entries + i, j - i, depth + dir_len + 1, &sub_id);
+
+            TreeEntry *te = &curr_tree.entries[curr_tree.count++];
+            strncpy(te->name, path, dir_len);
+            te->name[dir_len] = '\0';
+            te->mode = MODE_DIR;
+            te->hash = sub_id;
+            
+            i = j;
         }
     }
     
