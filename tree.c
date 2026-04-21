@@ -116,7 +116,15 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 
 #include "index.h"
 
-// ─── TODO: Implement these ──────────────────────────────────────────────────
+// helper logic
+static int build_tree_level(IndexEntry *entries, int count, int depth, ObjectID *out_id) {
+    Tree curr_tree;
+    curr_tree.count = 0;
+    
+    // TODO: implement folder grouping
+    (void)entries; (void)count; (void)depth; (void)out_id;
+    return -1;
+}
 
 // Build a tree hierarchy from the current index and write all tree
 // objects to the object store.
@@ -134,8 +142,7 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 int tree_from_index(ObjectID *id_out) {
     Index index;
     if (index_load(&index) != 0) return -1;
+    if (index.count == 0) return 0; // Empty tree
     
-    // TODO: implement recursive call
-    (void)id_out;
-    return -1;
+    return build_tree_level(index.entries, index.count, 0, id_out);
 }
