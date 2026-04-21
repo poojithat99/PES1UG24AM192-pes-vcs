@@ -54,6 +54,8 @@ For 100,000 commits over 50 branches, traversing would be extremely optimized du
 Git effectively implements a grace period metric utilizing the latest modified timestamp of objects in the filesystem. By default, `git gc` only considers an object "prunable" or safely unreachable if it has not been accessed/modified in the last 2 weeks. Additionally, active operations utilize transaction-like lock files to temporarily ensure atomicity, keeping GC processes from sweeping active references out.
 
 ## Output 1A: test_objects
+![](report_assets/screenshots/1A_test_objects.png)
+
 ```
 Stored blob with hash: d58213f5dbe0629b5c2fa28e5c7d4213ea09227ed0221bbe9db5e5c4b9aafc12
 Object stored at: .pes/objects/d5/8213f5dbe0629b5c2fa28e5c7d4213ea09227ed0221bbe9db5e5c4b9aafc12
@@ -65,6 +67,8 @@ All Phase 1 tests passed.
 ```
 
 ## Output 1B: find .pes/objects
+![](report_assets/screenshots/1B_objects.png)
+
 ```
 .pes/objects/25/ef1fa07ea68a52f800dc80756ee6b7ae34b337afedb9b46a1af8e11ec4f476
 .pes/objects/2a/594d39232787fba8eb7287418aec99c8fc2ecdaf5aaf2e650eda471e566fcf
@@ -72,6 +76,8 @@ All Phase 1 tests passed.
 ```
 
 ## Output 2A: test_tree
+![](report_assets/screenshots/2A_test_tree.png)
+
 ```
 Serialized tree: 139 bytes
 PASS: tree serialize/parse roundtrip
@@ -81,10 +87,21 @@ All Phase 2 tests passed.
 ```
 
 ## Output 2B: xxd of a raw tree object
+![](report_assets/screenshots/2B_tree_xxd.png)
+
 ```
+00000000: 7472 6565 2039 3800 3130 3036 3434 2066  tree 98.100644 f
+00000010: 696c 6531 2e74 7874 009d 4cfc 1d0d c963  ile1.txt..L....c
+00000020: 8b60 807d de1c 166f 157f d53b 6d9b 168b  .`.}...o...;m...
+00000030: fe66 2947 8714 bc4b 5831 3030 3634 3420  .f)G...KX100644
+00000040: 6669 6c65 322e 7478 7400 5cb1 5e6b 6163  file2.txt.\.^kac
+00000050: 2b66 e7de 86a3 0bb6 536a bba6 dcb4 2e7b  +f......Sj.....{
+00000060: 6dd7 f241 aafb 22dd c8e9                 m..A.."...
 ```
 
 ## Final Integration Test (Make test-integration)
+![](report_assets/screenshots/final_integration.png)
+
 ```
 === PES-VCS Integration Test ===
 
@@ -167,10 +184,9 @@ Objects created:
 === All integration tests completed ===
 ```
 
-## Output 3B: cat .pes/index
-```
-
 ## Output 3A: pes init -> add -> status
+![](report_assets/screenshots/3A_status.png)
+
 ```
 Initialized empty PES repository in .pes/
 Staged changes:
@@ -186,12 +202,16 @@ Untracked files:
 ```
 
 ## Output 3B: cat .pes/index
+![](report_assets/screenshots/3B_index.png)
+
 ```
 100644 9d4cfc1d0dc9638b60807dde1c166f157fd53b6d9b168bfe6629478714bc4b58 1776764437 8 file1.txt
 100644 5cb15e6b61632b66e7de86a30bb6536abba6dcb42e7b6dd7f241aafb22ddc8e9 1776764437 8 file2.txt
 ```
 
 ## Output 4A: pes log
+![](report_assets/screenshots/4A_log.png)
+
 ```
 commit 6a9bb2e12d85e3f53d17009d1e0ba8d29bcfd41460c330715982a0ce7ec1b8c3
 Author: PES User <pes@localhost>
@@ -214,6 +234,8 @@ Date:   1776764437
 ```
 
 ## Output 4B: find .pes -type f | sort
+![](report_assets/screenshots/4B_find_pes.png)
+
 ```
 .pes/HEAD
 .pes/index
@@ -231,18 +253,9 @@ Date:   1776764437
 ```
 
 ## Output 4C: cat .pes/refs/heads/main and cat .pes/HEAD
+![](report_assets/screenshots/4C_refs.png)
+
 ```
 6a9bb2e12d85e3f53d17009d1e0ba8d29bcfd41460c330715982a0ce7ec1b8c3
 ref: refs/heads/main
-```
-
-## Output 2B: xxd of a raw tree object (first 20 lines)
-```
-00000000: 7472 6565 2039 3800 3130 3036 3434 2066  tree 98.100644 f
-00000010: 696c 6531 2e74 7874 009d 4cfc 1d0d c963  ile1.txt..L....c
-00000020: 8b60 807d de1c 166f 157f d53b 6d9b 168b  .`.}...o...;m...
-00000030: fe66 2947 8714 bc4b 5831 3030 3634 3420  .f)G...KX100644 
-00000040: 6669 6c65 322e 7478 7400 5cb1 5e6b 6163  file2.txt.\.^kac
-00000050: 2b66 e7de 86a3 0bb6 536a bba6 dcb4 2e7b  +f......Sj.....{
-00000060: 6dd7 f241 aafb 22dd c8e9                 m..A.."...
 ```
