@@ -121,8 +121,24 @@ static int build_tree_level(IndexEntry *entries, int count, int depth, ObjectID 
     Tree curr_tree;
     curr_tree.count = 0;
     
-    // TODO: implement folder grouping
-    (void)entries; (void)count; (void)depth; (void)out_id;
+    int i = 0;
+    while (i < count) {
+        const char *path = entries[i].path + depth;
+        char *slash = strchr(path, '/');
+
+        if (!slash) {
+            TreeEntry *te = &curr_tree.entries[curr_tree.count++];
+            strcpy(te->name, path);
+            te->mode = entries[i].mode;
+            te->hash = entries[i].hash;
+            i++;
+        } else {
+            // TODO: implement folder grouping
+            i++;
+        }
+    }
+    
+    (void)out_id;
     return -1;
 }
 
