@@ -140,7 +140,21 @@ int index_load(Index *index) {
     FILE *f = fopen(INDEX_FILE, "r");
     if (!f) return 0; // It's okay if index doesn't exist yet
     
-    // TODO: implement index parsing line by line
+    char hex[128];
+    unsigned long long mtime;
+    while (index->count < MAX_INDEX_ENTRIES) {
+        IndexEntry *e = &index->entries[index->count];
+        if (fscanf(f, "%o %127s %llu %u %[^\n]\n", 
+                   &e->mode, hex, &mtime, &e->size, e->path) != 5) {
+            break;
+        }
+        e->mtime_sec = (uint64_t)mtime;
+        if (hex_to_hash(hex, &e->hash) != 0) {
+            continue;
+        }
+        index->count++;
+    }
+    
     fclose(f);
     return 0;
 }
