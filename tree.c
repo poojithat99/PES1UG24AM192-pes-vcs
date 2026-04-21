@@ -116,6 +116,9 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 
 #include "index.h"
 
+// Forward declarations (implemented in object.c)
+int object_write(ObjectType type, const void *data, size_t len, ObjectID *id_out);
+
 // helper logic
 static int build_tree_level(IndexEntry *entries, int count, int depth, ObjectID *out_id) {
     Tree curr_tree;
@@ -155,8 +158,17 @@ static int build_tree_level(IndexEntry *entries, int count, int depth, ObjectID 
         }
     }
     
-    (void)out_id;
-    return -1;
+    void *data;
+    size_t len;
+    if (tree_serialize(&curr_tree, &data, &len) != 0) return -1;
+    
+    if (object_write(OBJ_TREE, data, len, out_id) != 0) {
+        free(data);
+        return -1;
+    }
+    
+    free(data);
+    return 0;
 }
 
 // Build a tree hierarchy from the current index and write all tree
