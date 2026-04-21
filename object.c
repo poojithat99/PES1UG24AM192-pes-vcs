@@ -119,8 +119,34 @@ int object_write(ObjectType type, const void *data, size_t len, ObjectID *id_out
     snprintf(shard_dir, sizeof(shard_dir), "%s/%.2s", OBJECTS_DIR, hex);
     mkdir(shard_dir, 0755); // Ignore error as it might already exist
 
+    char tmp_path[512];
+    snprintf(tmp_path, sizeof(tmp_path), "%s/tmp_%d", shard_dir, getpid());
+    int fd = open(tmp_path, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    if (fd < 0) {
+        free(full_data);
+        return -1;
+    }
+
+    if (write(fd, full_data, full_len) != (ssize_t)full_len) {
+        close(fd);
+        unlink(tmp_path);
+        free(full_data);
+        return -1;
+    }
+
+    fsync(fd);
+    close(fd);
+
+    char final_path[512];
+    object_path(id_out, final_path, sizeof(final_path));
+    if (rename(tmp_path, final_path) != 0) {
+        unlink(tmp_path);
+        free(full_data);
+        return -1;
+    }
+
     free(full_data);
-    return -1; // remaining parts to be implemented
+    return 0;
 }
 
 // Read an object from the store.
